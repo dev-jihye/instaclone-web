@@ -2,6 +2,7 @@ import { useReactiveVar } from '@apollo/client';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { darkModeVar, isLoggedInVar } from './apollo';
+import routes from './routes';
 import Home from './screens/Home';
 import Login from './screens/Login';
 import NotFound from './screens/NotFound';
@@ -17,12 +18,12 @@ function App() {
       <Router>
         <Routes>
           {isLoggedIn ? (
-            <Route path="/" element={<Home />}></Route>
+            <Route path={routes.home} element={<Home />}></Route>
           ) : (
-            <Route path="/" element={<Login />}></Route>
+            <Route path={routes.home} element={<Login />}></Route>
           )}
           {!isLoggedIn ? (
-            <Route path="/sign-up" element={<SignUp />}></Route>
+            <Route path={routes.signUp} element={<SignUp />}></Route>
           ) : null}
           <Route path="*" element={<NotFound />}></Route>
         </Routes>
