@@ -22,7 +22,7 @@ const Subtitle = styled(BoldLink)`
   margin-top: 10px;
 `;
 
-function SignUp() {
+export default function SignUp() {
   return (
     <AuthLayout>
       <PageTitle title="Sign Up" />
@@ -45,4 +45,3 @@ function SignUp() {
     </AuthLayout>
   );
 }
-export default SignUp;
