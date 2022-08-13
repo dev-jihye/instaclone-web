@@ -60,7 +60,7 @@ export default function Login() {
   const [login, { loading }] = useMutation(LOGIN_MUTATION, {
     onCompleted,
   });
-  const onSubmitValid = (data) => {
+  const onSubmitValid = () => {
     if (loading) return;
     const { username, password } = getValues();
     login({
