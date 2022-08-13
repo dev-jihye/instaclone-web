@@ -14,6 +14,8 @@ import BottomBox from '../components/auth/BottomBox';
 import PageTitle from '../components/PageTitle';
 import { useForm } from 'react-hook-form';
 import FormError from '../components/auth/FormError';
+import { gql, useMutation } from '@apollo/client';
+import { logUserIn } from '../apollo';
 
 const FacebookLogin = styled.div`
   color: #385285;
@@ -23,17 +25,55 @@ const FacebookLogin = styled.div`
   }
 `;
 
+const LOGIN_MUTATION = gql`
+  mutation login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      ok
+      token
+      error
+    }
+  }
+`;
+
 export default function Login() {
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
+    getValues,
+    setError,
+    clearErrors,
   } = useForm({
-    mode: 'onBlur',
+    mode: 'onChange',
+  });
+  const onCompleted = (data) => {
+    const {
+      login: { ok, token, error },
+    } = data;
+    if (!ok) {
+      setError('result', { message: error });
+    }
+    if (token) {
+      logUserIn(token);
+    }
+  };
+  const [login, { loading }] = useMutation(LOGIN_MUTATION, {
+    onCompleted,
   });
   const onSubmitValid = (data) => {
-    //console.log(data);
+    if (loading) return;
+    const { username, password } = getValues();
+    login({
+      variables: {
+        username,
+        password,
+      },
+    });
   };
+  const clearLoginError = () => {
+    clearErrors('result');
+  };
+
   console.log(errors);
   return (
     <AuthLayout>
@@ -51,6 +91,7 @@ export default function Login() {
                 message: 'Username must be at least 5 characters',
               },
             })}
+            onFocus={clearLoginError}
             type="text"
             placeholder="Username"
             hasError={Boolean(errors?.username?.message)}
@@ -58,12 +99,18 @@ export default function Login() {
           <FormError message={errors?.username?.message} />
           <Input
             {...register('password', { required: 'Password is required' })}
+            onFocus={clearLoginError}
             type="password"
             placeholder="Password"
             hasError={Boolean(errors?.password?.message)}
           />
           <FormError message={errors?.password?.message} />
-          <Button type="submit" value="Log in" disabled={!isValid} />
+          <Button
+            type="submit"
+            value={loading ? 'Loading' : 'Log in'}
+            disabled={!isValid || loading}
+          />
+          <FormError message={errors?.result?.message} />
         </form>
         <Separator />
         <FacebookLogin>
