@@ -16,6 +16,7 @@ import { useForm } from 'react-hook-form';
 import FormError from '../components/auth/FormError';
 import { gql, useMutation } from '@apollo/client';
 import { logUserIn } from '../apollo';
+import { useLocation } from 'react-router-dom';
 
 const FacebookLogin = styled.div`
   color: #385285;
@@ -23,6 +24,10 @@ const FacebookLogin = styled.div`
     margin-left: 10px;
     font-weight: 600;
   }
+`;
+
+const Notification = styled.div`
+  color: #2ecc71;
 `;
 
 const LOGIN_MUTATION = gql`
@@ -36,6 +41,7 @@ const LOGIN_MUTATION = gql`
 `;
 
 export default function Login() {
+  const location = useLocation();
   const {
     register,
     handleSubmit,
@@ -45,6 +51,10 @@ export default function Login() {
     clearErrors,
   } = useForm({
     mode: 'onChange',
+    defaultValues: {
+      username: location?.state?.username || '',
+      password: location?.state?.password || '',
+    },
   });
   const onCompleted = (data) => {
     const {
@@ -74,7 +84,6 @@ export default function Login() {
     clearErrors('result');
   };
 
-  console.log(errors);
   return (
     <AuthLayout>
       <PageTitle title="Login" />
@@ -82,6 +91,7 @@ export default function Login() {
         <div>
           <FontAwesomeIcon icon={faInstagram} size="3x" />
         </div>
+        <Notification>{location?.state?.message}</Notification>
         <form onSubmit={handleSubmit(onSubmitValid)}>
           <Input
             {...register('username', {
