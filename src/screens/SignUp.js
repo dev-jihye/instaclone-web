@@ -51,11 +51,18 @@ export default function SignUp() {
   const navigate = useNavigate();
   // onCompleted from useMutation
   const onCompleted = (data) => {
+    const { username, password } = getValues();
     const {
       createAccount: { ok, error },
     } = data;
     if (!ok) return;
-    navigate(routes.home);
+    navigate(routes.home, {
+      state: {
+        message: 'Account created successfully. Please login.',
+        username,
+        password,
+      },
+    });
   };
   const [createAccount, { loading }] = useMutation(CREATE_ACCOUNT_MUTATION, {
     onCompleted,
@@ -64,6 +71,7 @@ export default function SignUp() {
     register,
     handleSubmit,
     formState: { errors, isValid },
+    getValues,
   } = useForm({
     mode: 'onChange',
   });
