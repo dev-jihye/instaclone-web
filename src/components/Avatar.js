@@ -12,8 +12,6 @@ const Img = styled.img`
   max-width: 100%;
 `;
 
-export default function Avatar({ url = '' }) {
-  return (
-    <SAvatar>{url !== '' ? <Img src={url} alt="avatar" /> : null}</SAvatar>
-  );
+export default function Avatar({ url }) {
+  return <SAvatar>{url ? <Img src={url} alt="avatar" /> : null}</SAvatar>;
 }
