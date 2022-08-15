@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 const ME_QUERY = gql`
   query me {
     me {
+      id
       username
       avatar
     }
@@ -25,5 +26,5 @@ export default function useUser() {
       logUserOut(navigate);
     }
   }, [data]);
-  return;
+  return { data };
 }
