@@ -7,10 +7,11 @@ import {
   faPaperPlane,
 } from '@fortawesome/free-regular-svg-icons';
 import { faHeart as SolidHeart } from '@fortawesome/free-solid-svg-icons';
-import Proptypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { BoldText } from '../shared';
 import Avatar from '../Avatar';
 import { gql, useMutation } from '@apollo/client';
+import Comments from './Comments';
 
 const TOGGLE_LIKE_MUTATION = gql`
   mutation toggleLike($id: Int!) {
@@ -70,7 +71,16 @@ const Likes = styled(BoldText)`
   display: block;
 `;
 
-export default function Photo({ id, user, file, isLiked, likes }) {
+export default function Photo({
+  id,
+  user,
+  file,
+  isLiked,
+  likes,
+  caption,
+  commentNumber,
+  comments,
+}) {
   // result = 백엔드로 부터 받은 데이터, cache = cache를 제어할 수 있는 링크
   const updateToggleLike = (cache, result) => {
     const {
@@ -110,6 +120,7 @@ export default function Photo({ id, user, file, isLiked, likes }) {
     },
     update: updateToggleLike,
   });
+
   return (
     <PhotoContainer key={id}>
       <PhotoHeader>
@@ -138,18 +149,26 @@ export default function Photo({ id, user, file, isLiked, likes }) {
           </div>
         </PhotoActions>
         <Likes>{likes === 1 ? '1 like' : `${likes} likes`}</Likes>
+        <Comments
+          author={user.username}
+          caption={caption}
+          commentNumber={commentNumber}
+          comments={comments}
+        />
       </PhotoData>
     </PhotoContainer>
   );
 }
 
 Photo.propTypes = {
-  id: Proptypes.number.isRequired,
-  user: Proptypes.shape({
-    avatar: Proptypes.string,
-    username: Proptypes.string.isRequired,
+  id: PropTypes.number.isRequired,
+  user: PropTypes.shape({
+    avatar: PropTypes.string,
+    username: PropTypes.string.isRequired,
   }),
-  file: Proptypes.string.isRequired,
-  isLiked: Proptypes.bool.isRequired,
-  likes: Proptypes.number.isRequired,
+  file: PropTypes.string.isRequired,
+  isLiked: PropTypes.bool.isRequired,
+  likes: PropTypes.number.isRequired,
+  caption: PropTypes.string,
+  commentNumber: PropTypes.number,
 };
