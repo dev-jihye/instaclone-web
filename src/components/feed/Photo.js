@@ -89,29 +89,21 @@ export default function Photo({
       },
     } = result;
     if (ok) {
-      const fragmentId = `Photo:${id}`;
-      const fragment = gql`
-        fragment BSName on Photo {
-          isLiked
-          likes
-        }
-      `;
-      // cache에서 fragmentId에 해당하는 데이터를 가져옴
-      const result = cache.readFragment({
-        id: fragmentId,
-        fragment,
-      });
-      if ('isLiked' in result && 'likes' in result) {
-        const { isLiked: cacheIsLiked, likes: cacheLikes } = result;
-        cache.writeFragment({
-          id: fragmentId,
-          fragment: fragment,
-          data: {
-            isLiked: !cacheIsLiked,
-            likes: cacheIsLiked ? cacheLikes - 1 : cacheLikes + 1,
+      const photoId = `Photo:${id}`;
+      cache.modify({
+        id: photoId,
+        fields: {
+          isLiked(prev) {
+            return !prev;
           },
-        });
-      }
+          likes(prev) {
+            if (isLiked) {
+              return prev - 1;
+            }
+            return prev + 1;
+          },
+        },
+      });
     }
   };
   const [toggleLikeMutation, { loading }] = useMutation(TOGGLE_LIKE_MUTATION, {
