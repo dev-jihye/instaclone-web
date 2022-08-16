@@ -47,7 +47,7 @@ const IconsContainer = styled.div`
   align-items: center;
 `;
 
-function Header() {
+export default function Header() {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const { data } = useUser();
   return (
@@ -79,4 +79,3 @@ function Header() {
     </SHeader>
   );
 }
-export default Header;
